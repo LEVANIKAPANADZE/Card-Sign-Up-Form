@@ -1,17 +1,24 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Img from "/images/bg-card-back.png";
 import * as yup from "yup";
+import { InputMask } from "@react-input/mask";
 
 const schema = yup.object({
   name: yup
     .string()
     .strict(false)
     .trim()
-    .required("Name is required")
-    .min(8, "Name must be at least 8 characters")
-    .max(25, "Name must be maximum 25 characters")
-    .test(""),
+    .required("name is required")
+    .min(8, "name must be at least 8 characters")
+    .max(25, "name must be maximum 25 characters")
+    .test("includes-space", "Iclude both firstname and lastname", (value) =>
+      value.includes(" ")
+    ),
+  cardNumber: yup
+    .string()
+    .required("Card Number is required!")
+    .min(19, "Card Number must be 16 characters"),
 });
 
 interface Inputs {
@@ -54,10 +61,10 @@ export default function Register() {
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="Name">Cardholder Name</label>
+          <label htmlFor="name">Cardholder name</label>
           <input
             type="text"
-            id="Name"
+            id="name"
             {...register("name")}
             placeholder="e.g. Levani Kapanadze"
           />
@@ -66,13 +73,14 @@ export default function Register() {
 
         <div>
           <label htmlFor="Number">Card Number</label>
-          <input
+          <InputMask
+            mask="9999 9999 9999 9999"
             type="text"
             id="Number"
             {...register("cardNumber")}
             placeholder="e.g. 1234 5678 9123 0000"
           />
-          {errors.name ? <p>{errors.name.message}</p> : null}
+          {errors.cardNumber ? <p>{errors.cardNumber.message}</p> : null}
         </div>
 
         <div>
@@ -86,7 +94,7 @@ export default function Register() {
 
         <div>
           {" "}
-          <label htmlFor="CVC">Card Number</label>
+          <label htmlFor="CVC">CVC</label>
           <input
             type="text"
             id="CVC"
